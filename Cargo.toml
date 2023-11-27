@@ -1,0 +1,5 @@
+# This file is just here to allow rust-analyzer to work when opening the root folder in VS Code.
+[workspace]
+
+resolver = "2"
+members = ["rust/aoc2023"]
