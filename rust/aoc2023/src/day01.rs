@@ -7,10 +7,10 @@ pub fn run(input: &str) -> Result<(), String> {
 }
 
 fn calibrate(input: &str, read: fn(&str) -> Vec<u32>) -> Result<u32, &str> {
-    input.lines().map(read).map(calibration_value).sum()
+    input.lines().map(read).map(|v| calibration_value(&v)).sum()
 }
 
-fn calibration_value(digits: Vec<u32>) -> Result<u32, &'static str> {
+fn calibration_value(digits: &[u32]) -> Result<u32, &'static str> {
     match (digits.first(), digits.last()) {
         (Some(f), Some(l)) => Ok(f * 10 + l),
         _ => Err("not enough digits"),
@@ -35,7 +35,7 @@ fn to_digits_part2(line: &str) -> Vec<u32> {
         }
     }
     let chars = line.chars().collect::<Vec<_>>();
-    extract_digits(&chars[..], vec![])
+    extract_digits(&chars, vec![])
 }
 
 const WORD_TO_DIGIT: [(&str, u32); 9] = [
@@ -81,10 +81,10 @@ mod tests {
 
     #[test]
     fn calibration_value_test() -> Result<(), String> {
-        assert_eq!(29, calibration_value(vec![2, 1, 9])?);
-        assert_eq!(77, calibration_value(vec![7])?);
-        assert_eq!(42, calibration_value(vec![4, 9, 8, 7, 2])?);
-        assert!(calibration_value(vec![]).is_err());
+        assert_eq!(29, calibration_value(&vec![2, 1, 9])?);
+        assert_eq!(77, calibration_value(&vec![7])?);
+        assert_eq!(42, calibration_value(&vec![4, 9, 8, 7, 2])?);
+        assert!(calibration_value(&vec![]).is_err());
         Ok(())
     }
 }
