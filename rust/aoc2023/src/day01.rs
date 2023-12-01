@@ -29,10 +29,13 @@ fn to_digits_part2(line: &str) -> Vec<u32> {
 fn extract_digits(chars: &[char], result: Vec<u32>) -> Vec<u32> {
     match chars {
         [] => result,
-        [h, rest @ ..] => match (h.to_digit(10), find_digit_word(chars)) {
-            (Some(x), _) | (_, Some(x)) => extract_digits(rest, [result, vec![x]].concat()),
-            _ => extract_digits(rest, result),
-        },
+        [h, rest @ ..] => {
+            let new_result = match h.to_digit(10).or_else(|| find_digit_word(chars)) {
+                Some(x) => [result, vec![x]].concat(),
+                _ => result,
+            };
+            extract_digits(rest, new_result)
+        }
     }
 }
 
