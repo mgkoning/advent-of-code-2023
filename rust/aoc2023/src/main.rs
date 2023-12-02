@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     env::{self, Args},
     fs,
     num::ParseIntError,
@@ -8,20 +7,29 @@ use std::{
 use chrono::Datelike;
 
 mod day01;
+mod day02;
 fn main() -> Result<(), String> {
     let puzzle = get_puzzle(env::args()).map_err(|e| e.to_string())?;
     let day_runner = get_day_runner(puzzle).ok_or(format!("Day {puzzle} not supported"))?;
     let input = get_input(puzzle)?;
-    day_runner(&input)
+    time(|| day_runner(&input))
 }
 
-fn get_day_runner(puzzle: u32) -> Option<DayRunner> {
-    return build_runner_map().get(&puzzle).copied();
+fn time<T>(run: impl Fn() -> T) -> T {
+    let start = std::time::Instant::now();
+    let result = run();
+    println!("Elapsed: {:?}", start.elapsed());
+    result
 }
 
 type DayRunner = fn(&str) -> Result<(), String>;
-fn build_runner_map() -> HashMap<u32, DayRunner> {
-    HashMap::from([(1, day01::run as DayRunner)])
+// Note: must be sorted
+const RUNNERS: [(u32, DayRunner); 2] = [(1, day01::run), (2, day02::run)];
+fn get_day_runner(puzzle: u32) -> Option<DayRunner> {
+    RUNNERS
+        .binary_search_by(|(d, _)| d.cmp(&puzzle))
+        .map(|i| RUNNERS[i].1)
+        .ok()
 }
 
 fn get_puzzle(args: Args) -> Result<u32, ParseIntError> {
