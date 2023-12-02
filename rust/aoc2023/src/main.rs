@@ -8,6 +8,7 @@ use chrono::Datelike;
 
 mod day01;
 mod day02;
+mod day03;
 fn main() -> Result<(), String> {
     let puzzle = get_puzzle(env::args()).map_err(|e| e.to_string())?;
     let day_runner = get_day_runner(puzzle).ok_or(format!("Day {puzzle} not supported"))?;
@@ -23,13 +24,9 @@ fn time<T>(run: impl Fn() -> T) -> T {
 }
 
 type DayRunner = fn(&str) -> Result<(), String>;
-// Note: must be sorted
-const RUNNERS: [(u32, DayRunner); 2] = [(1, day01::run), (2, day02::run)];
+const RUNNERS: [DayRunner; 3] = [day01::run, day02::run, day03::run];
 fn get_day_runner(puzzle: u32) -> Option<DayRunner> {
-    RUNNERS
-        .binary_search_by(|(d, _)| d.cmp(&puzzle))
-        .map(|i| RUNNERS[i].1)
-        .ok()
+    RUNNERS.get(puzzle as usize - 1).copied()
 }
 
 fn get_puzzle(args: Args) -> Result<u32, ParseIntError> {
