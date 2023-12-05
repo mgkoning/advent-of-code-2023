@@ -1,3 +1,4 @@
+#![feature(slice_as_chunks)]
 use std::{
     env::{self, Args},
     fs,
@@ -10,6 +11,8 @@ mod day01;
 mod day02;
 mod day03;
 mod day04;
+mod day05;
+
 fn main() -> Result<(), String> {
     let puzzle = get_puzzle(env::args()).map_err(|e| e.to_string())?;
     let day_runner = get_day_runner(puzzle).ok_or(format!("Day {puzzle} not supported"))?;
@@ -25,7 +28,7 @@ fn time<T>(run: impl Fn() -> T) -> T {
 }
 
 type DayRunner = fn(&str) -> Result<(), String>;
-const RUNNERS: [DayRunner; 4] = [day01::run, day02::run, day03::run, day04::run];
+const RUNNERS: [DayRunner; 5] = [day01::run, day02::run, day03::run, day04::run, day05::run];
 fn get_day_runner(puzzle: u32) -> Option<DayRunner> {
     RUNNERS.get(puzzle as usize - 1).copied()
 }
