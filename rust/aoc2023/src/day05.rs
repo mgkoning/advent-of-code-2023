@@ -1,20 +1,60 @@
+use std::collections::BTreeSet;
+
 pub fn run(input: &str) -> Result<(), String> {
     let (seeds, maps) = read_input(input)?;
     let part1 = part1(&seeds, &maps)?;
     println!("Part 1: {part1}");
+    let part2 = part2(&seeds, &maps)?;
+    println!("Part 2: {part2}");
     Ok(())
 }
 
 fn part1(seeds: &Vec<u64>, maps: &Vec<Map>) -> Result<u64, String> {
     seeds
         .iter()
-        .map(|s| run_conversions(*s, maps))
+        .flat_map(|s| run_conversions((*s, s+1), maps))
+        .map(|(a, _)| a)
         .min()
         .ok_or("No result found".to_owned())
 }
 
-fn run_conversions(value: u64, maps: &Vec<Map>) -> u64 {
-    maps.iter().fold(value, |acc, map| map.convert(acc))
+fn run_conversions(start: (u64, u64), maps: &Vec<Map>) -> Vec<(u64, u64)> {
+    maps.iter().fold(vec![start], |acc, m| {
+        acc.iter()
+            .flat_map(|p| to_conversion_ranges(*p, &m))
+            .collect()
+    })
+}
+
+fn part2(seeds: &Vec<u64>, maps: &Vec<Map>) -> Result<u64, String> {
+    match seeds.as_chunks::<2>() {
+        (chunks, []) => chunks
+            .iter()
+            .map(|[from, len]| (*from, from + len))
+            .flat_map(|s| run_conversions(s, &maps))
+            .map(|(a, _)| a)
+            .min()
+            .ok_or("No result found".to_owned()),
+        _ => Err("seeds was not of even length".to_owned()),
+    }
+}
+
+fn to_conversion_ranges((from, to): (u64, u64), conversion_map: &Map) -> Vec<(u64, u64)> {
+    conversion_map
+        .conversions
+        .iter()
+        .flat_map(|c| [c.source_start, c.source_start + c.length])
+        .filter(|v| *v < to && from <= *v)
+        .chain([from, to])
+        .collect::<BTreeSet<_>>()
+        .iter()
+        .map_windows(|&[from, to]| {
+            (
+                conversion_map.convert(*from),
+                conversion_map.convert(to - 1) + 1,
+            )
+        })
+        .collect::<Vec<_>>()
 }
 
 fn read_input(input: &str) -> Result<(Vec<u64>, Vec<Map>), String> {
@@ -95,7 +135,7 @@ impl Map {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Conversion {
     destination_start: u64,
     source_start: u64,
@@ -143,5 +183,17 @@ humidity-to-location map:
     fn part1_test() {
         let (s, m) = read_input(SAMPLE_INPUT).unwrap();
         assert_eq!(35, part1(&s, &m).unwrap());
+    }
+
+    #[test]
+    fn to_conversion_ranges_test() {
+        let (_, m) = read_input(SAMPLE_INPUT).unwrap();
+        println!("{:?}", to_conversion_ranges((74, 88), m.get(4).unwrap()));
+    }
+
+    #[test]
+    fn part2_test() {
+        let (s, m) = read_input(SAMPLE_INPUT).unwrap();
+        assert_eq!(46, part2(&s, &m).unwrap());
     }
 }

@@ -1,4 +1,4 @@
-#![feature(slice_as_chunks)]
+#![feature(slice_as_chunks, iter_map_windows)]
 use std::{
     env::{self, Args},
     fs,
