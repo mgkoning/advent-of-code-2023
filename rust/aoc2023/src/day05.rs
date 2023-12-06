@@ -1,5 +1,7 @@
 use std::collections::BTreeSet;
 
+use crate::util::read;
+
 pub fn run(input: &str) -> Result<(), String> {
     let (seeds, maps) = read_input(input)?;
     let part1 = part1(&seeds, &maps)?;
@@ -12,7 +14,7 @@ pub fn run(input: &str) -> Result<(), String> {
 fn part1(seeds: &Vec<u64>, maps: &Vec<Map>) -> Result<u64, String> {
     seeds
         .iter()
-        .flat_map(|s| run_conversions((*s, s+1), maps))
+        .flat_map(|s| run_conversions((*s, s + 1), maps))
         .map(|(a, _)| a)
         .min()
         .ok_or("No result found".to_owned())
@@ -75,7 +77,7 @@ fn read_seeds(line: &str) -> Result<Vec<u64>, String> {
         Some((_, s)) => {
             let seeds = s
                 .split_whitespace()
-                .map(|n| read_u64(n))
+                .map(|n| read::<u64>(n))
                 .collect::<Result<Vec<u64>, _>>()?;
             Ok(seeds)
         }
@@ -99,18 +101,12 @@ fn read_map(map: &str) -> Result<Map, String> {
 fn read_conversion(conversion: &str) -> Result<Conversion, String> {
     match &conversion.split_whitespace().collect::<Vec<_>>()[..] {
         [destination, source, length] => Ok(Conversion {
-            destination_start: read_u64(&destination)?,
-            source_start: read_u64(&source)?,
-            length: read_u64(&length)?,
+            destination_start: read::<u64>(&destination)?,
+            source_start: read::<u64>(&source)?,
+            length: read::<u64>(&length)?,
         }),
         _ => Err(format!("Could not read conversion '{conversion}'")),
     }
-}
-
-fn read_u64(value: &str) -> Result<u64, String> {
-    value
-        .parse::<u64>()
-        .map_err(|e| format!("Error reading {value}: {e}"))
 }
 
 #[derive(Debug)]
