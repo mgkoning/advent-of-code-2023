@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use itertools::Itertools;
 use regex::Regex;
 
+use crate::util::lcm;
+
 pub fn run(input: &str) -> Result<(), String> {
     let (instr, map) = read_input(input)?;
     let part1 = part1(&instr, &map);
@@ -27,20 +29,6 @@ fn part2(instr: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i64 {
         .map(|from| follow_map(from, instr, |p| p.ends_with('Z'), map))
         .reduce(lcm)
         .unwrap()
-}
-
-fn lcm(a: i64, b: i64) -> i64 {
-    (a * b).abs() / gcd(a, b)
-}
-
-fn gcd(a: i64, b: i64) -> i64 {
-    match (a, b) {
-        (0, b) => b,
-        (a, 0) => a,
-        (a, b) if a < b => gcd(a, b.rem_euclid(a)),
-        (a, b) if b < a => gcd(b, a.rem_euclid(b)),
-        _ => panic!("never finished gcd"),
-    }
 }
 
 fn follow_map(
