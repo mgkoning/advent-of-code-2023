@@ -69,14 +69,10 @@ fn sort_value(cards: &Vec<char>, card_values: &HashMap<char, i64>) -> i64 {
 }
 
 fn hand_value_p1(cards: &Vec<char>) -> i64 {
-    // count the cards by label to determine what type the hand is
-    let count_map = cards.into_iter().fold(HashMap::new(), |mut acc, card| {
-        *acc.entry(card).or_insert(0) += 1;
-        acc
-    });
-    let mut counts = count_map.values().collect::<Vec<_>>();
-    // sort the counts so the match can be simpler
-    counts.sort_unstable();
+    hand_value(&card_counts(cards))
+}
+
+fn hand_value(counts: &Vec<i64>) -> i64 {
     match &counts[..] {
         [5] => 6,          // five of a kind
         [1, 4] => 5,       // four of a kind
@@ -88,33 +84,30 @@ fn hand_value_p1(cards: &Vec<char>) -> i64 {
     }
 }
 
-const ALL_CARDS: [char; 12] = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A'];
+fn card_counts(cards: &Vec<char>) -> Vec<i64> {
+    // count the cards by label to determine what type the hand is
+    cards
+        .into_iter()
+        .fold(HashMap::new(), |mut acc, card| {
+            *acc.entry(card).or_insert(0) += 1;
+            acc
+        })
+        .values()
+        // sort the counts so the match can be simpler
+        .sorted()
+        .cloned()
+        .collect_vec()
+}
+
 fn hand_value_p2(cards: &Vec<char>) -> i64 {
-    let (jokers, others): (Vec<&char>, Vec<&char>) = cards.iter().partition(|&c| *c == 'J');
-    if jokers.is_empty() {
-        hand_value_p1(cards)
-    } else {
-        // if there are any jokers, just "brute force" every replacement option and see what yields the highest type.
-        // not very elegant, but fast enough.
-        let options = jokers
-            .iter()
-            .map(|_| &ALL_CARDS)
-            .multi_cartesian_product()
-            .collect_vec();
-        options
-            .iter()
-            .map(|o| {
-                hand_value_p1(
-                    &o.iter()
-                        .cloned()
-                        .chain(others.iter().cloned())
-                        .cloned()
-                        .collect_vec(),
-                )
-            })
-            .max()
-            .unwrap_or_default()
+    let (jokers, others) = cards.iter().partition::<Vec<char>, _>(|&c| *c == 'J');
+    if others.is_empty() {
+        return hand_value(&vec![jokers.len() as i64]);
     }
+    let mut counts = card_counts(&others);
+    let most_common = counts.len() - 1;
+    counts[most_common] += jokers.len() as i64;
+    hand_value(&counts)
 }
 
 fn read_input(input: &str) -> Result<Vec<Hand>, String> {
