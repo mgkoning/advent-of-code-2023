@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use itertools::Itertools;
+
 pub fn read<T: FromStr>(value: &str) -> Result<T, String>
 where
     <T as FromStr>::Err: std::fmt::Display,
@@ -9,6 +11,13 @@ where
         .map_err(|e| format!("Failed to read {value}: {e}"))
 }
 
+/** Splits the provided string on whitespace and parses all parts as T. */
+pub fn read_all<T: FromStr>(value: &str) -> Result<Vec<T>, String>
+where
+    <T as FromStr>::Err: std::fmt::Display,
+{
+    value.split_whitespace().map(read::<T>).try_collect()
+}
 
 pub fn lcm(a: i64, b: i64) -> i64 {
     (a * b).abs() / gcd(a, b)

@@ -15,6 +15,7 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
 mod util;
 
 fn main() -> Result<(), String> {
@@ -32,7 +33,7 @@ fn time<T>(run: impl Fn() -> T) -> T {
 }
 
 type DayRunner = fn(&str) -> Result<(), String>;
-const RUNNERS: [DayRunner; 8] = [
+const RUNNERS: [DayRunner; 9] = [
     day01::run,
     day02::run,
     day03::run,
@@ -41,6 +42,7 @@ const RUNNERS: [DayRunner; 8] = [
     day06::run,
     day07::run,
     day08::run,
+    day09::run,
 ];
 fn get_day_runner(puzzle: u32) -> Option<DayRunner> {
     RUNNERS.get(puzzle as usize - 1).copied()
