@@ -4,36 +4,24 @@ use itertools::Itertools;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 pub struct Coord {
-    x: i64,
-    y: i64,
+    pub x: i64,
+    pub y: i64,
 }
 impl Coord {
     pub fn from(x: i64, y: i64) -> Coord {
         Coord { x, y }
     }
     pub fn north(&self) -> Coord {
-        Coord {
-            x: self.x,
-            y: self.y - 1,
-        }
+        Coord::from(self.x, self.y - 1)
     }
     pub fn south(&self) -> Coord {
-        Coord {
-            x: self.x,
-            y: self.y + 1,
-        }
+        Coord::from(self.x, self.y + 1)
     }
     pub fn east(&self) -> Coord {
-        Coord {
-            x: self.x + 1,
-            y: self.y,
-        }
+        Coord::from(self.x + 1, self.y)
     }
     pub fn west(&self) -> Coord {
-        Coord {
-            x: self.x - 1,
-            y: self.y,
-        }
+        Coord::from(self.x - 1, self.y)
     }
 }
 
