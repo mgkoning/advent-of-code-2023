@@ -2,6 +2,41 @@ use std::str::FromStr;
 
 use itertools::Itertools;
 
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
+pub struct Coord {
+    x: i64,
+    y: i64,
+}
+impl Coord {
+    pub fn from(x: i64, y: i64) -> Coord {
+        Coord { x, y }
+    }
+    pub fn north(&self) -> Coord {
+        Coord {
+            x: self.x,
+            y: self.y - 1,
+        }
+    }
+    pub fn south(&self) -> Coord {
+        Coord {
+            x: self.x,
+            y: self.y + 1,
+        }
+    }
+    pub fn east(&self) -> Coord {
+        Coord {
+            x: self.x + 1,
+            y: self.y,
+        }
+    }
+    pub fn west(&self) -> Coord {
+        Coord {
+            x: self.x - 1,
+            y: self.y,
+        }
+    }
+}
+
 pub fn read<T: FromStr>(value: &str) -> Result<T, String>
 where
     <T as FromStr>::Err: std::fmt::Display,
@@ -17,6 +52,14 @@ where
     <T as FromStr>::Err: std::fmt::Display,
 {
     value.split_whitespace().map(read::<T>).try_collect()
+}
+
+pub fn assign_coordinates(spec: &'_ str) -> impl Iterator<Item = (Coord, char)> + '_ {
+    spec.lines().enumerate().flat_map(|(y, l)| {
+        l.chars()
+            .enumerate()
+            .map(move |(x, c)| (Coord::from(x as i64, y as i64), c))
+    })
 }
 
 pub fn lcm(a: i64, b: i64) -> i64 {

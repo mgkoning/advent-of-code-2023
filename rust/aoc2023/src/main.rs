@@ -16,6 +16,7 @@ mod day06;
 mod day07;
 mod day08;
 mod day09;
+mod day10;
 mod util;
 
 fn main() -> Result<(), String> {
@@ -32,22 +33,6 @@ fn time<T>(run: impl Fn() -> T) -> T {
     result
 }
 
-type DayRunner = fn(&str) -> Result<(), String>;
-const RUNNERS: [DayRunner; 9] = [
-    day01::run,
-    day02::run,
-    day03::run,
-    day04::run,
-    day05::run,
-    day06::run,
-    day07::run,
-    day08::run,
-    day09::run,
-];
-fn get_day_runner(puzzle: u32) -> Option<DayRunner> {
-    RUNNERS.get(puzzle as usize - 1).copied()
-}
-
 fn get_puzzle(args: Args) -> Result<u32, ParseIntError> {
     args.skip(1)
         .next()
@@ -59,3 +44,20 @@ fn get_input(puzzle: u32) -> Result<String, String> {
     let filename = format!("day{:02}.txt", puzzle);
     fs::read_to_string(format!("../../input/{filename}")).map_err(|e| e.to_string())
 }
+
+type DayRunner = fn(&str) -> Result<(), String>;
+fn get_day_runner(puzzle: u32) -> Option<&'static DayRunner> {
+    RUNNERS.get(puzzle as usize - 1)
+}
+const RUNNERS: [DayRunner; 10] = [
+    day01::run,
+    day02::run,
+    day03::run,
+    day04::run,
+    day05::run,
+    day06::run,
+    day07::run,
+    day08::run,
+    day09::run,
+    day10::run,
+];
