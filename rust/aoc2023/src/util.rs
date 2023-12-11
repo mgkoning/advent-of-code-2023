@@ -23,6 +23,9 @@ impl Coord {
     pub fn west(&self) -> Coord {
         Coord::from(self.x - 1, self.y)
     }
+    pub fn manhattan_distance(&self, other: &Self) -> i64 {
+        (self.x - other.x).abs() + (self.y - other.y).abs()
+    }
 }
 
 pub fn read<T: FromStr>(value: &str) -> Result<T, String>
