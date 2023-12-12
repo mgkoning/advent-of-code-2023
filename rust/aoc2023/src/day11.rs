@@ -5,16 +5,16 @@ use itertools::Itertools;
 use crate::util::{assign_coordinates, Coord};
 
 pub fn run(input: &str) -> Result<(), String> {
-    let read = read_input(input);
-    let part1 = distance_after_expand(&read, 2);
+    let galaxies = read_input(input);
+    let part1 = distance_after_expand(&galaxies, 2);
     println!("Part 1: {part1}");
-    let part2 = distance_after_expand(&read, 1_000_000);
+    let part2 = distance_after_expand(&galaxies, 1_000_000);
     println!("Part 2: {part2}");
     Ok(())
 }
 
-fn distance_after_expand(galaxies: &Vec<Coord>, factor: i64) -> i64 {
-    let expanded = expand(galaxies, factor);
+fn distance_after_expand(galaxies: &Vec<Coord>, expand_factor: i64) -> i64 {
+    let expanded = expand(galaxies, expand_factor);
     expanded
         .iter()
         .tuple_combinations::<(_, _)>()
@@ -22,7 +22,7 @@ fn distance_after_expand(galaxies: &Vec<Coord>, factor: i64) -> i64 {
         .sum()
 }
 
-fn expand(galaxies: &Vec<Coord>, factor: i64) -> Vec<Coord> {
+fn expand(galaxies: &Vec<Coord>, expand_factor: i64) -> Vec<Coord> {
     let list_missing = |zs: HashSet<i64>| {
         (0..*zs.iter().max().unwrap_or(&0))
             .filter(|z| !zs.contains(z))
@@ -35,8 +35,8 @@ fn expand(galaxies: &Vec<Coord>, factor: i64) -> Vec<Coord> {
     galaxies
         .iter()
         .map(|coord| Coord {
-            x: coord.x + (factor - 1) * count_smaller(&expand_x, coord.x),
-            y: coord.y + (factor - 1) * count_smaller(&expand_y, coord.y),
+            x: coord.x + (expand_factor - 1) * count_smaller(&expand_x, coord.x),
+            y: coord.y + (expand_factor - 1) * count_smaller(&expand_y, coord.y),
         })
         .collect_vec()
 }

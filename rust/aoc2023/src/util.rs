@@ -45,6 +45,17 @@ where
     value.split_whitespace().map(read::<T>).try_collect()
 }
 
+pub fn read_all_sep_by<T: FromStr>(value: &str, separator: char) -> Result<Vec<T>, String>
+where
+    <T as FromStr>::Err: std::fmt::Display,
+{
+    value
+        .split(separator)
+        .filter(|p| !p.is_empty())
+        .map(read::<T>)
+        .try_collect()
+}
+
 pub fn assign_coordinates(spec: &'_ str) -> impl Iterator<Item = (Coord, char)> + '_ {
     spec.lines().enumerate().flat_map(|(y, l)| {
         l.chars()
