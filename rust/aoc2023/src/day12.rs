@@ -28,7 +28,10 @@ impl RowState {
     fn choose(&self, position: usize) -> RowState {
         let mut springs = self.springs.clone();
         springs.push(position);
-        RowState { remaining: self.remaining - 1, springs }
+        RowState {
+            remaining: self.remaining - 1,
+            springs,
+        }
     }
 }
 #[derive(Debug)]
@@ -39,11 +42,23 @@ struct RowInfo<'a> {
 }
 fn possible_configs(row: &Vec<char>, spec: &Vec<i64>) -> i64 {
     let required_springs: i64 = spec.iter().sum();
-    let open_spots = row.iter().enumerate().filter(|&c| *c.1 == '?').map(|c| c.0).collect_vec();
+    let open_spots = row
+        .iter()
+        .enumerate()
+        .filter(|&c| *c.1 == '?')
+        .map(|c| c.0)
+        .collect_vec();
     let current_springs = row.iter().filter(|&c| *c == '#').count() as i64;
     let remaining_springs = required_springs - current_springs;
-    let row_info = RowInfo { row, spec, open_spots };
-    let row_state = RowState { remaining: remaining_springs, springs: vec![] };
+    let row_info = RowInfo {
+        row,
+        spec,
+        open_spots,
+    };
+    let row_state = RowState {
+        remaining: remaining_springs,
+        springs: vec![],
+    };
 
     fn possibilities(state: RowState, row: &RowInfo, next: usize) -> i64 {
         //println!("possibilities {:?} {:?} {next}", state, row);
@@ -54,7 +69,8 @@ fn possible_configs(row: &Vec<char>, spec: &Vec<i64>) -> i64 {
             return 0;
         }
         let position = row.open_spots[next];
-        return possibilities(state.choose(position), row, next + 1) + possibilities(state, row, next + 1);
+        return possibilities(state.choose(position), row, next + 1)
+            + possibilities(state, row, next + 1);
     }
     fn check_state(state: &RowState, row: &RowInfo) -> i64 {
         let is_ok = (0..row.row.len())
@@ -65,7 +81,11 @@ fn possible_configs(row: &Vec<char>, spec: &Vec<i64>) -> i64 {
             .map(|(_, run)| run.count() as i64)
             .collect_vec()
             .eq(row.spec);
-        if is_ok { 1 } else { 0 }
+        if is_ok {
+            1
+        } else {
+            0
+        }
     }
     possibilities(row_state, &row_info, 0)
 }
