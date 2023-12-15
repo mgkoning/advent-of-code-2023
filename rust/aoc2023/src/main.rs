@@ -1,4 +1,4 @@
-#![feature(slice_as_chunks, iter_map_windows)]
+#![feature(slice_as_chunks, iter_map_windows, ascii_char)]
 use std::{
     env::{self, Args},
     fs,
@@ -21,6 +21,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 mod util;
 
 fn main() -> Result<(), String> {
@@ -53,7 +54,7 @@ type DayRunner = fn(&str) -> Result<(), String>;
 fn get_day_runner(puzzle: u32) -> Option<&'static DayRunner> {
     RUNNERS.get(puzzle as usize - 1)
 }
-const RUNNERS: [DayRunner; 14] = [
+const RUNNERS: [DayRunner; 15] = [
     day01::run,
     day02::run,
     day03::run,
@@ -68,4 +69,5 @@ const RUNNERS: [DayRunner; 14] = [
     day12::run,
     day13::run,
     day14::run,
+    day15::run,
 ];
