@@ -16,3 +16,6 @@ target/
 
 # inputs
 /input/
+
+# MacOS X junk
+.DS_Store

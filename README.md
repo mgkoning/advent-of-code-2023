@@ -9,3 +9,8 @@ for more information.
 Inputs are not part of the repository (as per request of the organizers of Advent of Code).
 They should be placed in the `input` directory using the name format `day00.txt`, as this path and
 format is hard-coded in the application.
+
+## Visualizations
+
+### Day 16
+![Day 16: Light bouncing off mirrors](viz/day_16_mirrors_p2.png)

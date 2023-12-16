@@ -8,6 +8,9 @@ pub struct Coord {
     pub y: i64,
 }
 impl Coord {
+    pub fn origin() -> Coord {
+        Coord { x: 0, y: 0 }
+    }
     pub fn from(x: i64, y: i64) -> Coord {
         Coord { x, y }
     }
@@ -26,8 +29,42 @@ impl Coord {
     pub fn move_by(&self, (dx, dy): (i64, i64)) -> Coord {
         Coord::from(self.x + dx, self.y + dy)
     }
+    pub fn go(&self, direction: Direction) -> Coord {
+        match direction {
+            Direction::North => self.north(),
+            Direction::East => self.east(),
+            Direction::South => self.south(),
+            Direction::West => self.west(),
+        }
+    }
     pub fn manhattan_distance(&self, other: &Self) -> i64 {
         (self.x - other.x).abs() + (self.y - other.y).abs()
+    }
+}
+
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+pub enum Direction {
+    North,
+    West,
+    South,
+    East,
+}
+impl Direction {
+    pub fn turn_right(&self) -> Direction {
+        match self {
+            Self::North => Direction::East,
+            Self::East => Self::South,
+            Self::South => Self::West,
+            Self::West => Self::North,
+        }
+    }
+    pub fn turn_left(&self) -> Direction {
+        match self {
+            Self::North => Self::West,
+            Self::West => Self::South,
+            Self::South => Self::East,
+            Self::East => Self::North,
+        }
     }
 }
 
