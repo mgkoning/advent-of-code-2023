@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{str::FromStr, fmt::Display};
 
 use itertools::Itertools;
 
@@ -37,8 +37,21 @@ impl Coord {
             Direction::West => self.west(),
         }
     }
+    pub fn go_by(&self, direction: Direction, length: i64) -> Coord {
+        match direction {
+            Direction::North => self.move_by((0, -length)),
+            Direction::East => self.move_by((length, 0)),
+            Direction::South => self.move_by((0, length)),
+            Direction::West => self.move_by((-length, 0)),
+        }
+    }
     pub fn manhattan_distance(&self, other: &Self) -> i64 {
         (self.x - other.x).abs() + (self.y - other.y).abs()
+    }
+}
+impl Display for Coord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "({}, {})", self.x, self.y)
     }
 }
 
