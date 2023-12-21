@@ -1,6 +1,6 @@
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-use crate::util::{assign_coordinates, Coord};
+use crate::util::{assign_coordinates, Coord, Step};
 
 pub fn run(input: &str) -> Result<(), String> {
     let (maze, start) = read_input(input)?;
@@ -49,22 +49,6 @@ fn part2(maze: &HashMap<Coord, char>, distances: &HashMap<Coord, i64>) -> i64 {
     maze.keys()
         .filter(|c| !distances.contains_key(c) && is_inside(c))
         .count() as i64
-}
-
-#[derive(PartialEq, Eq)]
-struct Step {
-    at: Coord,
-    distance: i64,
-}
-impl Ord for Step {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.distance.cmp(&other.distance).reverse()
-    }
-}
-impl PartialOrd for Step {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
 }
 
 fn distances(start: Coord, maze: &HashMap<Coord, char>) -> HashMap<Coord, i64> {

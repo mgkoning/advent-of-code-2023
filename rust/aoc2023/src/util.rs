@@ -48,10 +48,29 @@ impl Coord {
     pub fn manhattan_distance(&self, other: &Self) -> i64 {
         (self.x - other.x).abs() + (self.y - other.y).abs()
     }
+    pub fn neighbors4(&self) -> [Coord; 4] {
+        [self.north(), self.east(), self.south(), self.west()]
+    }
 }
 impl Display for Coord {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
+    }
+}
+
+#[derive(PartialEq, Eq)]
+pub struct Step {
+    pub at: Coord,
+    pub distance: i64,
+}
+impl Ord for Step {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.distance.cmp(&other.distance).reverse()
+    }
+}
+impl PartialOrd for Step {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
