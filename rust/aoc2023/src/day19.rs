@@ -29,17 +29,15 @@ struct Part {
 }
 
 pub fn run(input: &str) -> Result<(), String> {
-    let (workflows, parts) = read_input(input)?;
-    let part1 = part1(&parts, &workflows);
+    let (workflow_map, parts) = read_input(input)?;
+    let part1 = part1(&parts, &workflow_map);
     println!("Part 1: {part1}");
+    let part2 = part2(&workflow_map);
+    println!("Part 2: {part2}");
     Ok(())
 }
 
-fn part1(parts: &Vec<Part>, workflows: &Vec<Workflow>) -> i64 {
-    let workflow_map = workflows
-        .iter()
-        .map(|w| (w.name.to_owned(), w))
-        .collect::<HashMap<_, _>>();
+fn part1(parts: &Vec<Part>, workflow_map: &HashMap<String, Workflow>) -> i64 {
     parts
         .iter()
         .filter(|p| is_accepted(p, &workflow_map))
@@ -47,7 +45,17 @@ fn part1(parts: &Vec<Part>, workflows: &Vec<Workflow>) -> i64 {
         .sum()
 }
 
-fn is_accepted(part: &Part, workflow_map: &HashMap<String, &Workflow>) -> bool {
+fn part2(workflow_map: &HashMap<String, Workflow>) -> i64 {
+    // start with "range part": Part { x: [1, 4000], m: [1, 4000], .. }
+    // from workflow "in", cut ranges from part for every rule
+    // follow destinations for each "cut" part
+    // find all range parts that end in A
+    // answer: sum of length x range * length m range * ...
+    _ = workflow_map.len();
+    -1
+}
+
+fn is_accepted(part: &Part, workflow_map: &HashMap<String, Workflow>) -> bool {
     successors(Some("in".to_owned()), |prv| {
         workflow_map.get(prv).and_then(|workflow| {
             workflow
@@ -87,9 +95,15 @@ fn check_condition(
         .cloned()
 }
 
-fn read_input(input: &str) -> Result<(Vec<Workflow>, Vec<Part>), String> {
+fn read_input(input: &str) -> Result<(HashMap<String, Workflow>, Vec<Part>), String> {
     match input.split_once("\n\n") {
-        Some((w, p)) => read_workflows(w).and_then(|ws| read_parts(p).map(|ps| (ws, ps))),
+        Some((w, p)) => read_workflows(w).and_then(|ws| {
+            let workflow_map = ws
+                .into_iter()
+                .map(|w| (w.name.to_owned(), w))
+                .collect::<HashMap<_, _>>();
+            read_parts(p).map(|ps| (workflow_map, ps))
+        }),
         None => Err("Could not read input".to_string()),
     }
 }

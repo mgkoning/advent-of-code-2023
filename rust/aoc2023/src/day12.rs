@@ -2,6 +2,7 @@ use itertools::Itertools;
 
 use crate::util::read_all_sep_by;
 
+#[allow(unused_variables)]
 pub fn run(input: &str) -> Result<(), String> {
     let springs = read_input(input)?;
     let part1 = count_possibilities(&springs);
