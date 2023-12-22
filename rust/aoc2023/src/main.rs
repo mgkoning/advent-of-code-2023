@@ -28,6 +28,7 @@ mod day18;
 mod day19;
 mod day20;
 mod day21;
+mod day22;
 mod util;
 
 fn main() -> Result<(), String> {
@@ -60,7 +61,7 @@ type DayRunner = fn(&str) -> Result<(), String>;
 fn get_day_runner(puzzle: u32) -> Option<&'static DayRunner> {
     RUNNERS.get(puzzle as usize - 1)
 }
-const RUNNERS: [DayRunner; 21] = [
+const RUNNERS: [DayRunner; 22] = [
     day01::run,
     day02::run,
     day03::run,
@@ -82,4 +83,5 @@ const RUNNERS: [DayRunner; 21] = [
     day19::run,
     day20::run,
     day21::run,
+    day22::run,
 ];
